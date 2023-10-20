@@ -1,19 +1,11 @@
 import turtle
 
-wn = turtle.Screen()
-tess = turtle.Turtle()
-
-
 def drawPoly(t, somesides, somesize):
     """Get turtle t to draw a regular polygon X side and Y size"""
 
     for i in range(somesides):
         t.forward(somesize)
         t.left(360/somesides)
-
-
-t = int(input("How many sides?" ))
-z = int(input("Side lenght?" ))
 
 def PolyWHOLE(h):
     """Draw polygon and move."""
@@ -22,6 +14,11 @@ def PolyWHOLE(h):
     drawPoly(tess, t, z)
     tess.penup()
 
+wn = turtle.Screen()
+tess = turtle.Turtle()
+
+t = int(input("How many sides?" ))
+z = int(input("Side lenght?" ))
 
 tess.goto(0, 0)
 PolyWHOLE("red")
