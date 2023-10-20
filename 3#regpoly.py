@@ -8,7 +8,6 @@ def drawPoly(t, somesides, somesize):
         t.left(360/somesides)
 
 wn = turtle.Screen()
-
 tess = turtle.Turtle()
 
 t = int(input("How many sides?" ))
