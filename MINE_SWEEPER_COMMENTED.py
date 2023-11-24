@@ -47,13 +47,26 @@ def mineDetector(mine_x, mine_y, cursor_x, cursor_y, score):
 
     if (mine_x, mine_y) != (cursor_x, cursor_y): #mine not found.
         score = score + 1
-        display.show(Image.HAPPY)
-        sleep(1000)
-        display.scroll("score: " + str(score), delay = 300)
-        sleep(1000)
-
+        display.set_pixel(cursor_x, cursor_y, 2)
+        sleep(200)
+        display.set_pixel(cursor_x, cursor_y, 0)
+        sleep(100)
+        display.set_pixel(cursor_x, cursor_y, 5)
+        sleep(200)
+        display.set_pixel(cursor_x, cursor_y, 7)
+        sleep(200)
+        display.set_pixel(cursor_x, cursor_y, 3)
+        sleep(200)
+        display.set_pixel(cursor_x, cursor_y, 0)
+        
         return score
 
+def brightness(cursor_x, cursor_y):
+
+    brightness = display.get_pixel(cursor_x, cursor_y)
+
+    return brightness
+    
 def main():
     #Set mine coordinates and storages them on variables x and y.
     mine_x, mine_y = setMine()
@@ -61,43 +74,57 @@ def main():
     #Set player on the micro:bit center: (2, 2).
     cursor_x, cursor_y = positionPlayer(2, 2, 0, 0)
 
+    #Set every LED to medium brightness.
+    medium_brightness = 4
+    for x in range(5):
+        for y in range(5):
+            display.set_pixel(x, y, medium_brightness) 
+
+    #Set the player display brightness to 7.
+    display.set_pixel(cursor_x, cursor_y, 7)
+
     score = 0
-    while not button_a.is_pressed():
-
-        #Set every LED to the brightness it had before.
-        for x in range(5):
-            for y in range(5):
-                display.set_pixel(x, y, 4) #Aquí iría la condicion de si hay casilla en brightness 0, no cambiarlas. ELse: brightness = 4.
-
-        #Set the player display brightness to 7.
-        display.set_pixel(cursor_x, cursor_y, 7)
-
+    while (score != 24) and (mine_x, mine_y) != (cursor_x, cursor_y):
+        
         if button_a.was_pressed():
             #Search for mine and return score.
             score = mineDetector(mine_x, mine_y, cursor_x, cursor_y, score)
-            #Turn the searched pixel to 0 if mine not found. (This doesnt work for me... :( )
-            display.set_pixel(cursor_x, cursor_y, 0)
-
+            #Turn the searched pixel to 0 if mine not found. (This doesnt work..)
+    
         if accelerometer.was_gesture('right'):
-            display.set_pixel(cursor_x, cursor_y, 4) #Should return the brightness the pixel had, 0 if searched, 4 if not.
+            if button_a.was_pressed(): 
+                display.set_pixel(cursor_x - 1, cursor_y, brightness(cursor_x - 1, cursor_y))
+            else:
+                display.set_pixel(cursor_x, cursor_y, medium_brightness)
+                
             desplazamiento_x = 1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, desplazamiento_x, 0) #Update player position
             print(cursor_x, cursor_y)
+            print(display.get_pixel(cursor_x, cursor_y))
 
         if accelerometer.was_gesture('left'):
-            display.set_pixel(cursor_x, cursor_y, 4) #Should return the brightness the pixel had, 0 if searched, 4 if not.
+            if button_a.was_pressed():
+                display.set_pixel(cursor_x + 1, cursor_y, brightness(cursor_x + 1, cursor_y))
+            else:
+                display.set_pixel(cursor_x, cursor_y, medium_brightness)
             desplazamiento_x = -1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, desplazamiento_x, 0) #Update player position
             print(cursor_x, cursor_y)
 
         if accelerometer.was_gesture('up'):
-            display.set_pixel(cursor_x, cursor_y, 4) #Should return the brightness the pixel had, 0 if searched, 4 if not.
+            if button_a.was_pressed():
+                display.set_pixel(cursor_x, cursor_y + 1, brightness(cursor_x, cursor_y + 1))
+            else:
+                display.set_pixel(cursor_x, cursor_y, medium_brightness)
             desplazamiento_y = -1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, 0, desplazamiento_y) #Update player position
             print(cursor_x, cursor_y)
 
         if accelerometer.was_gesture('down'):
-            display.set_pixel(cursor_x, cursor_y, 4) #Should return the brightness the pixel had, 0 if searched, 4 if not.
+            if button_a.was_pressed():
+                display.set_pixel(cursor_x - 1, cursor_y, brightness(cursor_x - 1, cursor_y))
+            else:
+                display.set_pixel(cursor_x, cursor_y, medium_brightness)    
             desplazamiento_y = 1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, 0, desplazamiento_y) #Update player position
             print(cursor_x, cursor_y)
@@ -108,7 +135,6 @@ def main():
             display.scroll("YOU WIN!!!", delay = 300)
             sleep(1000)
             display.show(Image.SNAKE)
-
 
 if __name__ == "__main__":
     main()
