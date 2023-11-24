@@ -16,13 +16,19 @@ def positionPlayer(x, y, desplazamiento_x, desplazamiento_y):
     """
     Set coordinates for player (cursor).
     """
+    x_anterior = x
+    y_anterior = y
+    x_posterior = (x + desplazamiento_x) % 5
+    y_posterior = (y + desplazamiento_y) % 5
 
-    x = (x + desplazamiento_x) % 5
-    y = (y + desplazamiento_y) % 5
 
-    display.set_pixel(x, y, 7)
+    Brightness_posterior = brightness(x_posterior, y_posterior)
+    
+    display.set_pixel(x_posterior, y_posterior, 7)
 
-    return x, y
+    Brightness_anterior = brightness(x_anterior, y_anterior)
+
+    return x_posterior, y_posterior
 
 def mineDetector(mine_x, mine_y, cursor_x, cursor_y, score):
     """
@@ -92,12 +98,17 @@ def main():
             #Turn the searched pixel to 0 if mine not found. (This doesnt work..)
     
         if accelerometer.was_gesture('right'):
+            print("movement right")
             if button_a.was_pressed(): 
+                print("en el button was pressed")
                 display.set_pixel(cursor_x - 1, cursor_y, brightness(cursor_x - 1, cursor_y))
+                print("fin button was pressed")
             else:
+                print("basico")
                 display.set_pixel(cursor_x, cursor_y, medium_brightness)
                 
             desplazamiento_x = 1
+            brightness(cursor_x, cursor_y)
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, desplazamiento_x, 0) #Update player position
             print(cursor_x, cursor_y)
             print(display.get_pixel(cursor_x, cursor_y))
@@ -112,10 +123,8 @@ def main():
             print(cursor_x, cursor_y)
 
         if accelerometer.was_gesture('up'):
-            if button_a.was_pressed():
-                display.set_pixel(cursor_x, cursor_y + 1, brightness(cursor_x, cursor_y + 1))
-            else:
-                display.set_pixel(cursor_x, cursor_y, medium_brightness)
+            display.set_pixel(cursor_x, cursor_y + 1, brightness(cursor_x, cursor_y + 1))
+            display.set_pixel(cursor_x, cursor_y, medium_brightness)
             desplazamiento_y = -1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, 0, desplazamiento_y) #Update player position
             print(cursor_x, cursor_y)
