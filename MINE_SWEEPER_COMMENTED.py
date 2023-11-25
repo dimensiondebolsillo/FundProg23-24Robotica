@@ -12,22 +12,37 @@ def setMine():
 
     return mine_x_coordinate, mine_y_coordinate
 
+def brightness(cursor_x, cursor_y):
+    """
+    Get the brightness a certain pixel has.
+    """
+    
+    brightness = display.get_pixel(cursor_x, cursor_y)
+
+    return brightness
+
 def positionPlayer(x, y, desplazamiento_x, desplazamiento_y):
     """
     Set coordinates for player (cursor).
     """
+    
     x_anterior = x
     y_anterior = y
     x_posterior = (x + desplazamiento_x) % 5
     y_posterior = (y + desplazamiento_y) % 5
-
-
-    Brightness_posterior = brightness(x_posterior, y_posterior)
     
-    display.set_pixel(x_posterior, y_posterior, 7)
+    brightness_anterior = brightness(x_anterior, y_anterior)
+    if brightness_anterior == 0:
+        display.set_pixel(x_anterior, y_anterior, brightness_anterior)
+    else:
+        display.set_pixel(x_anterior, y_anterior, 4)
 
-    Brightness_anterior = brightness(x_anterior, y_anterior)
+    brightness_posterior = brightness(x_posterior, y_posterior)
+        
+    display.set_pixel(x_posterior, y_posterior, 9)
 
+    
+    
     return x_posterior, y_posterior
 
 def mineDetector(mine_x, mine_y, cursor_x, cursor_y, score):
@@ -66,17 +81,11 @@ def mineDetector(mine_x, mine_y, cursor_x, cursor_y, score):
         display.set_pixel(cursor_x, cursor_y, 0)
         
         return score
-
-def brightness(cursor_x, cursor_y):
-
-    brightness = display.get_pixel(cursor_x, cursor_y)
-
-    return brightness
     
 def main():
     #Set mine coordinates and storages them on variables x and y.
     mine_x, mine_y = setMine()
-
+    
     #Set player on the micro:bit center: (2, 2).
     cursor_x, cursor_y = positionPlayer(2, 2, 0, 0)
 
@@ -86,57 +95,31 @@ def main():
         for y in range(5):
             display.set_pixel(x, y, medium_brightness) 
 
-    #Set the player display brightness to 7.
-    display.set_pixel(cursor_x, cursor_y, 7)
+    #Set the player display brightness to 9.
+    display.set_pixel(cursor_x, cursor_y, 9)
 
     score = 0
-    while (score != 24) and (mine_x, mine_y) != (cursor_x, cursor_y):
-        
+    while (score != 24):
+
         if button_a.was_pressed():
             #Search for mine and return score.
             score = mineDetector(mine_x, mine_y, cursor_x, cursor_y, score)
-            #Turn the searched pixel to 0 if mine not found. (This doesnt work..)
     
         if accelerometer.was_gesture('right'):
-            print("movement right")
-            if button_a.was_pressed(): 
-                print("en el button was pressed")
-                display.set_pixel(cursor_x - 1, cursor_y, brightness(cursor_x - 1, cursor_y))
-                print("fin button was pressed")
-            else:
-                print("basico")
-                display.set_pixel(cursor_x, cursor_y, medium_brightness)
-                
             desplazamiento_x = 1
-            brightness(cursor_x, cursor_y)
-            cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, desplazamiento_x, 0) #Update player position
-            print(cursor_x, cursor_y)
-            print(display.get_pixel(cursor_x, cursor_y))
+            cursor_x, cursor_y  = positionPlayer(cursor_x, cursor_y, desplazamiento_x, 0) #Update player position
 
         if accelerometer.was_gesture('left'):
-            if button_a.was_pressed():
-                display.set_pixel(cursor_x + 1, cursor_y, brightness(cursor_x + 1, cursor_y))
-            else:
-                display.set_pixel(cursor_x, cursor_y, medium_brightness)
             desplazamiento_x = -1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, desplazamiento_x, 0) #Update player position
-            print(cursor_x, cursor_y)
 
         if accelerometer.was_gesture('up'):
-            display.set_pixel(cursor_x, cursor_y + 1, brightness(cursor_x, cursor_y + 1))
-            display.set_pixel(cursor_x, cursor_y, medium_brightness)
             desplazamiento_y = -1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, 0, desplazamiento_y) #Update player position
-            print(cursor_x, cursor_y)
 
         if accelerometer.was_gesture('down'):
-            if button_a.was_pressed():
-                display.set_pixel(cursor_x - 1, cursor_y, brightness(cursor_x - 1, cursor_y))
-            else:
-                display.set_pixel(cursor_x, cursor_y, medium_brightness)    
             desplazamiento_y = 1
             cursor_x, cursor_y = positionPlayer(cursor_x, cursor_y, 0, desplazamiento_y) #Update player position
-            print(cursor_x, cursor_y)
 
         if score == 24:
             display.show(Image.DIAMOND)
