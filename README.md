@@ -1,6 +1,6 @@
 # Fundamentos de la programación
 ## Introducción
-Se trata de proyectos tarea de la asignatura impartida en la URJC en la EIF del campus de FUenlabrada para la carrera de la que era alumna en su día, Ingeniería de Robótica Software.
+Se trata de proyectos tarea de la asignatura impartida en el campus de mi universidad que he tenido que realizar yo.
 ## Desglose
 Está dividido en carpetas sobre los diferentes proyectos:
   - Tareas de práctica
